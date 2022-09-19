@@ -3,5 +3,30 @@
   "version": "0.1.0",
   "engines": {
     "node": ">=16.x"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest --coverage --verbose"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fiorellitamaya/LIM018-md-links.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fiorellitamaya/LIM018-md-links/issues"
+  },
+  "homepage": "https://github.com/fiorellitamaya/LIM018-md-links#readme",
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "jest": "^29.0.3"
   }
 }
