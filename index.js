@@ -34,10 +34,24 @@ function readFile(mdfile) {
   return fs.readFileSync(mdfile, 'utf8');
 }
 readFile(mdFile(absolutePath));
-console.log(readFile(mdFile(absolutePath)));
+// console.log(readFile(mdFile(absolutePath)));
 
 // Extraer links//
-function getLinks()
+function getLinks(readfile) {
+  const regularExp = /\[(.+)\]\((https?:\/\/.+)\)/gi;
+  const links = readfile.match(regularExp);
+  const regExpText = /\[[^\s]+(.+?)\]/gi;
+  const regExpLink = /\((https?.+?)\)/gi;
+  links.forEach((link) => {
+    const linksObj = {
+      href: link.match(regExpLink)[0].slice(1, -1),
+      text: link.match(regExpText)[0].slice(1, -1),
+      file: mdFile(absolutePath),
+    };
+    console.log(linksObj);
+  });
+}
+getLinks(readFile(mdFile(absolutePath)));
 
 module.exports = {
   pathExist,
