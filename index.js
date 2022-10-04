@@ -1,40 +1,52 @@
 const path = require('node:path');
 const fs = require('fs');
-
-const route = './pruebas/prueba1.md';
-// const route = './thumb.png';
+const fetch = require('node-fetch');
 
 // Comprobando que la ruta existe//
-function pathExist(enteredRoute) {
-  const pathResult = fs.existsSync(enteredRoute);
-  if (!pathResult) {
-    console.log('La ruta no existe');
-  } else console.log('La ruta es correcta');
+function pathExists(enteredRoute) {
+  return fs.existsSync(enteredRoute);
 }
-pathExist(route);
 
 // Obteniendo ruta absoluta//
 function getAbsolutepath(enteredRoute) {
   return path.isAbsolute(enteredRoute) ? enteredRoute : path.resolve(enteredRoute);
 }
-const absolutePath = getAbsolutepath(route);
-console.log(absolutePath);
+
+// Comprobando si la ruta es un directorio//
+function isADirectory(absoluteRoute) {
+  return fs.statSync(absoluteRoute).isDirectory();
+}
+// Leyendo el directorio//
+function readDirectory(absoluteRoute) {
+  return fs.readdirSync(absoluteRoute);
+}
 
 // Comprobando que es un archivo MD//
-function mdFile(obtainedAbsolutePath) {
+function isMdFile(obtainedAbsolutePath) {
   const fileExtension = path.extname(obtainedAbsolutePath);
-  if (fileExtension === '.md') {
-    return obtainedAbsolutePath;
-  } else console.log('No es un archivo md');
+  return fileExtension === '.md';
 }
-mdFile(absolutePath);
+
+// Extraer archivos Md del directorio //
+function findFilesInDirectory(absoluteRoute) {
+  let mdFiles = [];
+  const directory = readDirectory(absoluteRoute);
+  directory.forEach((file) => {
+    const newRoute = path.join(absoluteRoute, file);
+    if (isADirectory(newRoute)) {
+      const readAgain = findFilesInDirectory(newRoute);
+      mdFiles = mdFiles.concat(readAgain);
+    } else if (isMdFile(newRoute)) {
+      mdFiles.push(newRoute);
+    }
+  });
+  return mdFiles;
+}
 
 // Leer archivo MD//
 function readFile(mdfile) {
   return fs.readFileSync(mdfile, 'utf8');
 }
-readFile(mdFile(absolutePath));
-// console.log(readFile(mdFile(absolutePath)));
 
 // Extraer links//
 function getLinks(readfile) {
@@ -42,20 +54,70 @@ function getLinks(readfile) {
   const links = readfile.match(regularExp);
   const regExpText = /\[[^\s]+(.+?)\]/gi;
   const regExpLink = /\((https?.+?)\)/gi;
-  links.forEach((link) => {
+  if (links === null) {
+    return [];
+  }
+  return links.map((link) => { // Creando el array de objetos
     const linksObj = {
       href: link.match(regExpLink)[0].slice(1, -1),
       text: link.match(regExpText)[0].slice(1, -1),
-      file: mdFile(absolutePath),
+      file: isMdFile(readFile),
     };
-    console.log(linksObj);
+    return linksObj;
   });
 }
-getLinks(readFile(mdFile(absolutePath)));
+
+// Ver el estado de los links con peticion HTTP//
+function getLinksStatus(links) {
+  const promisesArray = links.map((link) => fetch(link.href)
+    .then((resolve) => {
+      if (resolve.status >= 200 && resolve.status < 400) {
+        return {
+          ...link,
+          status: resolve.status,
+          message: resolve.statusText,
+        };
+      } return {
+        ...link,
+        status: resolve.status,
+        message: 'fail',
+      };
+    })
+    .catch((error) => ({
+      ...link,
+      status: error.errno,
+      message: 'fail',
+    })));
+  return Promise.all(promisesArray);
+}
+
+function getStats(links) {
+  const linksArray = links.map((link) => link.href);
+  const totalLinks = linksArray.length;
+  const uniqueLinks = [];
+  linksArray.forEach((link) => {
+    if (!uniqueLinks.includes(link)) {
+      uniqueLinks.push(link);
+    }
+  });
+  return { totalLinks, uniqueLinks: uniqueLinks.length };
+}
+
+function getBrokenLinks(validateLinks) {
+  return validateLinks.filter((link) => link.message === 'fail').length;
+}
 
 module.exports = {
-  pathExist,
+  pathExists,
   getAbsolutepath,
-  mdFile,
+  isADirectory,
+  readDirectory,
+  isMdFile,
+  findFilesInDirectory,
   readFile,
+  getLinks,
+  getLinksStatus,
+  getStats,
+  getBrokenLinks,
+
 };
