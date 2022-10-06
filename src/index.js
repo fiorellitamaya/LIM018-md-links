@@ -45,7 +45,7 @@ function readFile(mdfile) {
 }
 
 // Extraer links//
-function getLinks(fileContent) {
+function getLinks(fileContent, ruta) {
   const regularExp = /\[(.+)\]\((https?:\/\/.+)\)/gi;
   const links = fileContent.match(regularExp);
   const regExpText = /\[[^\s]+(.+?)\]/gi;
@@ -57,7 +57,7 @@ function getLinks(fileContent) {
     const linksObj = {
       href: link.match(regExpLink)[0].slice(1, -1),
       text: link.match(regExpText)[0].slice(1, -1),
-      file: '',
+      file: ruta,
     };
     return linksObj;
   });

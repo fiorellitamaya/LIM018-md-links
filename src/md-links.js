@@ -10,16 +10,16 @@ function mdLinks(path, options) {
         mdFiles.forEach((file) => {
           const absoluteFile = functions.getAbsolutepath(file);
           const fileContent = functions.readFile(absoluteFile);
-          const objectsArray = functions.getLinks(fileContent);
+          const objectsArray = functions.getLinks(fileContent, absoluteFile);
           linksArray.push(objectsArray);
-          console.log(linksArray.flat(2));
         });
+        resolve(linksArray.flat(2));
         if (options.validate) {
-          functions.getLinksStatus(linksArray).then((result) => resolve(result));
+          functions.getLinksStatus(linksArray.flat(2)).then((result) => resolve(result));
         }
       } else if (functions.isMdFile(path)) {
         const mdFileContent = functions.readFile(path);
-        const objectsArray = functions.getLinks(mdFileContent);
+        const objectsArray = functions.getLinks(mdFileContent, path);
         if (objectsArray.length > 0) {
           resolve(objectsArray);
           if (options.validate) {
@@ -35,7 +35,7 @@ function mdLinks(path, options) {
   });
 }
 
-// const path = '../pruebas';
-const path = '../pruebas/prueba1.md';
+const path = '../pruebas';
+// const path = '../pruebas/prueba1.md';
 
 mdLinks(path, { validate: true }).then((result) => console.log(result));
