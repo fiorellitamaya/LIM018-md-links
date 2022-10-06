@@ -57,7 +57,7 @@ function getLinks(fileContent) {
     const linksObj = {
       href: link.match(regExpLink)[0].slice(1, -1),
       text: link.match(regExpText)[0].slice(1, -1),
-      file: isMdFile(fileContent),
+      file: '',
     };
     return linksObj;
   });
