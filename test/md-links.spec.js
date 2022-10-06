@@ -1,4 +1,4 @@
-const index = require('../index');
+const index = require('../src/index');
 
 describe('pathExists', () => {
   it('should check if the path exist', () => {

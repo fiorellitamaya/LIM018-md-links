@@ -1,11 +1,11 @@
 {
-  "name": "md-links",
+  "name": "fiorellamaya",
   "version": "0.1.0",
   "engines": {
     "node": ">=16.x"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "test": "jest --coverage --verbose"
   },
   "main": "index.js",
@@ -16,13 +16,13 @@
     "type": "git",
     "url": "git+https://github.com/fiorellitamaya/LIM018-md-links.git"
   },
-  "author": "",
+  "author": "Fiorella Amaya",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/fiorellitamaya/LIM018-md-links/issues"
   },
   "homepage": "https://github.com/fiorellitamaya/LIM018-md-links#readme",
-  "description": "",
+  "description": "Herramienta que ayuda a extraer los links de un archivo md, ver el status y generar estadisticas",
   "devDependencies": {
     "eslint": "^8.23.1",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -30,6 +30,10 @@
     "jest": "^29.0.3"
   },
   "dependencies": {
+    "chalk": "^5.1.0",
     "node-fetch": "^2.6.7"
+  },
+  "bin": {
+    "md-links": ".src/cli.js"
   }
 }
