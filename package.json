@@ -31,9 +31,10 @@
   },
   "dependencies": {
     "chalk": "^5.1.0",
+    "global": "^4.4.0",
     "node-fetch": "^2.6.7"
   },
   "bin": {
-    "md-links": ".src/cli.js"
+    "md-links": "./src/cli.js"
   }
 }
