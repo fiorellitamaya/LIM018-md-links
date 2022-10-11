@@ -35,7 +35,8 @@ function mdLinks(path, options) {
   });
 }
 
-const path = '../pruebas';
-// const path = '../pruebas/prueba1.md';
+module.exports = { mdLinks };
+// const path = '../pruebas';
+// // const path = '../pruebas/prueba1.md';
 
-mdLinks(path, { validate: true }).then((result) => console.log(result));
+// mdLinks(path, { validate: true }).then((result) => console.log(result));
