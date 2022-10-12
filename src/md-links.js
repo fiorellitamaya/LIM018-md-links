@@ -13,24 +13,27 @@ function mdLinks(path, options) {
           const objectsArray = functions.getLinks(fileContent, absoluteFile);
           linksArray.push(objectsArray);
         });
-        resolve(linksArray.flat(2));
+
         if (options.validate) {
           functions.getLinksStatus(linksArray.flat(2)).then((result) => resolve(result));
+        } else {
+          resolve(linksArray.flat(2));
         }
       } else if (functions.isMdFile(path)) {
         const mdFileContent = functions.readFile(path);
         const objectsArray = functions.getLinks(mdFileContent, functions.getAbsolutepath(path));
         if (objectsArray.length > 0) {
-          resolve(objectsArray);
           if (options.validate) {
             functions.getLinksStatus(objectsArray).then((result) => resolve(result));
+          } else {
+            resolve(objectsArray);
           }
         } else {
-          console.log('El archivo no contiene links');
+          resolve([]);
         }
       }
     } else {
-      reject('La ruta no existe, por favor ingresa una nueva ruta');
+      reject(new Error('La ruta no existe, por favor ingresa una nueva ruta'));
     }
   });
 }

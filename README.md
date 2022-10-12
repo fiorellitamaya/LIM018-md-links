@@ -10,7 +10,7 @@ MD-LINKS es una librería que permite leer y analizar archivos en formato `Markd
 
 ##  Instalación 🚀
 
-npm i md-links-fiorellamaya
+`npm i md-links-fiorellamaya`
 
 ##  Guia de Uso
 
