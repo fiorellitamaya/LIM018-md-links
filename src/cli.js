@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const mdLinks = require('./md-links');
-// const index = require('./index');
+const index = require('./index');
 
 const command = process.argv;
 const path = command.filter((e) => e !== '--validate' && e !== '--stats' && e !== '--help')[2];
@@ -16,8 +16,7 @@ if (command.length <= 2) {
   👉 Por favor ingrese una ruta o escriba md-links --help para ayuda
   ╚══════════════════════════════════════════════════════════════════╝
   `);
-}
-if (help) {
+} else if (help) {
   console.log(`
   ╔═══════════════════════════════════════════════════════════════════════════════════╗
     🚀Uso: md-links <ruta> [opciones]
@@ -28,18 +27,45 @@ if (help) {
     --validate --stats  Muestra el total de links, los links únicos y los links rotos.
   ╚═══════════════════════════════════════════════════════════════════════════════════╝
    `);
-}
-
-if (!validate && !stats && !help && command.length > 2) {
+} else {
   mdLinks.mdLinks(path, { validate, stats })
-    .then((result) => result.forEach((link) => {
-      console.log(`
-        ════════════════════════ LINK ════════════════════════
-        href: ${link.href}
-        text: ${link.text}
-        file: ${link.file}
+    .then((objArray) => {
+      if (validate && stats && !help) {
+        console.log(`
+      ═════════════════════ VALIDATE & STATS ═════════════════════
+      Total links: ${index.getStats(objArray).totalLinks}
+      Unique links: ${index.getStats(objArray).uniqueLinks}
+      Broquen links: ${index.getBrokenLinks(objArray)}
+    `);
+      } else if (!validate && stats && !help) {
+        console.log(`
+        ════════════════════════ STATS ════════════════════════
+        Total links: ${index.getStats(objArray).totalLinks}
+        Unique links: ${index.getStats(objArray).uniqueLinks}
+        
       `);
-    }))
+      } else {
+        objArray.forEach((link) => {
+          if (!validate && !stats && !help && command.length > 2) {
+            console.log(`
+            ════════════════════════ LINK  ════════════════════════
+            href: ${link.href}
+            text: ${link.text}
+            file: ${link.file}
+          `);
+          } else if (validate && !stats && !help) {
+            console.log(`
+          ════════════════════════ VALIDATE ════════════════════════
+          href: ${link.href}
+          text: ${link.text}
+          file: ${link.file}
+          status: ${link.status}
+          message: ${link.message}
+        `);
+          }
+        });
+      }
+    })
     .catch((error) =>
       console.log(error));
 }
